@@ -1,0 +1,103 @@
+import java.lang.Math
+import org.openhab.core.library.types.DecimalType
+
+rule "Detect temperature anomaly Room 1"
+when
+    Item Temp_Room1 changed
+then
+    if (previousState !== null && previousState instanceof DecimalType && newState instanceof DecimalType) {
+        val Number delta = Math::abs((newState as DecimalType).doubleValue - (previousState as DecimalType).doubleValue)
+        if (delta > 5.0) {
+            val String message = String::format("%s | Кімната 1 | зміна %.2f °C (було %.2f, стало %.2f)",
+                now.toString, delta.doubleValue,
+                (previousState as DecimalType).doubleValue, (newState as DecimalType).doubleValue)
+            AnomalyStatus.postUpdate("ВИЯВЛЕНО")
+            AnomalyLog.postUpdate(message)
+            logWarn("PR7-ANOMALY", message)
+        }
+    }
+end
+
+rule "Detect temperature anomaly Room 2"
+when
+    Item Temp_Room2 changed
+then
+    if (previousState !== null && previousState instanceof DecimalType && newState instanceof DecimalType) {
+        val Number delta = Math::abs((newState as DecimalType).doubleValue - (previousState as DecimalType).doubleValue)
+        if (delta > 5.0) {
+            val String message = String::format("%s | Кімната 2 | зміна %.2f °C (було %.2f, стало %.2f)",
+                now.toString, delta.doubleValue,
+                (previousState as DecimalType).doubleValue, (newState as DecimalType).doubleValue)
+            AnomalyStatus.postUpdate("ВИЯВЛЕНО")
+            AnomalyLog.postUpdate(message)
+            logWarn("PR7-ANOMALY", message)
+        }
+    }
+end
+
+rule "Detect temperature anomaly Room 3"
+when
+    Item Temp_Room3 changed
+then
+    if (previousState !== null && previousState instanceof DecimalType && newState instanceof DecimalType) {
+        val Number delta = Math::abs((newState as DecimalType).doubleValue - (previousState as DecimalType).doubleValue)
+        if (delta > 5.0) {
+            val String message = String::format("%s | Кімната 3 | зміна %.2f °C (було %.2f, стало %.2f)",
+                now.toString, delta.doubleValue,
+                (previousState as DecimalType).doubleValue, (newState as DecimalType).doubleValue)
+            AnomalyStatus.postUpdate("ВИЯВЛЕНО")
+            AnomalyLog.postUpdate(message)
+            logWarn("PR7-ANOMALY", message)
+        }
+    }
+end
+
+
+rule "Calculate current temperature statistics"
+when
+    Time cron "5 * * * * ?"
+then
+    if (Temp_Room1.state instanceof DecimalType &&
+        Temp_Room2.state instanceof DecimalType &&
+        Temp_Room3.state instanceof DecimalType) {
+
+        val t1 = (Temp_Room1.state as DecimalType).doubleValue
+        val t2 = (Temp_Room2.state as DecimalType).doubleValue
+        val t3 = (Temp_Room3.state as DecimalType).doubleValue
+
+        AvgTemperature.postUpdate((t1 + t2 + t3) / 3.0)
+        MinTemperature.postUpdate(Math::min(t1, Math::min(t2, t3)))
+        MaxTemperature.postUpdate(Math::max(t1, Math::max(t2, t3)))
+        LastAnalyticsUpdate.postUpdate(now.toString)
+    }
+end
+
+
+rule "Calculate hourly temperature averages"
+when
+    Time cron "10 * * * * ?"
+then
+    val start = now.minusHours(1)
+
+    if (Temp_Room1.state instanceof DecimalType) {
+        val a1 = Temp_Room1.averageSince(start, "rrd4j")
+        if (a1 !== null && a1 instanceof DecimalType) HourAvg_Room1.postUpdate((a1 as DecimalType).doubleValue)
+    }
+    if (Temp_Room2.state instanceof DecimalType) {
+        val a2 = Temp_Room2.averageSince(start, "rrd4j")
+        if (a2 !== null && a2 instanceof DecimalType) HourAvg_Room2.postUpdate((a2 as DecimalType).doubleValue)
+    }
+    if (Temp_Room3.state instanceof DecimalType) {
+        val a3 = Temp_Room3.averageSince(start, "rrd4j")
+        if (a3 !== null && a3 instanceof DecimalType) HourAvg_Room3.postUpdate((a3 as DecimalType).doubleValue)
+    }
+
+    if (HourAvg_Room1.state instanceof DecimalType &&
+        HourAvg_Room2.state instanceof DecimalType &&
+        HourAvg_Room3.state instanceof DecimalType) {
+        val h1 = (HourAvg_Room1.state as DecimalType).doubleValue
+        val h2 = (HourAvg_Room2.state as DecimalType).doubleValue
+        val h3 = (HourAvg_Room3.state as DecimalType).doubleValue
+        HourAvg_All.postUpdate((h1 + h2 + h3) / 3.0)
+    }
+end

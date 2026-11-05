@@ -1,0 +1,22 @@
+
+Number Temp_Room1 "Температура - кімната 1 [%.1f °C]" { channel="mqtt:topic:localBroker:room1:temperature" }
+Number Humidity_Room1 "Вологість - кімната 1 [%.1f %%]" { channel="mqtt:topic:localBroker:room1:humidity" }
+
+Number Temp_Room2 "Температура - кімната 2 [%.1f °C]" { channel="mqtt:topic:localBroker:room2:temperature" }
+Number Humidity_Room2 "Вологість - кімната 2 [%.1f %%]" { channel="mqtt:topic:localBroker:room2:humidity" }
+
+Number Temp_Room3 "Температура - кімната 3 [%.1f °C]" { channel="mqtt:topic:localBroker:room3:temperature" }
+Number Humidity_Room3 "Вологість - кімната 3 [%.1f %%]" { channel="mqtt:topic:localBroker:room3:humidity" }
+
+Number AvgTemperature "Середня температура [%.2f °C]"
+Number MinTemperature "Мінімальна температура [%.2f °C]"
+Number MaxTemperature "Максимальна температура [%.2f °C]"
+
+Number HourAvg_Room1 "Середня за годину - кімната 1 [%.2f °C]"
+Number HourAvg_Room2 "Середня за годину - кімната 2 [%.2f °C]"
+Number HourAvg_Room3 "Середня за годину - кімната 3 [%.2f °C]"
+Number HourAvg_All "Середня за годину - усі кімнати [%.2f °C]"
+
+String AnomalyStatus "Статус аномалій [%s]"
+String AnomalyLog "Остання аномалія [%s]"
+DateTime LastAnalyticsUpdate "Останнє оновлення аналітики [%1$tH:%1$tM:%1$tS]"
