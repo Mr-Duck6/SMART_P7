@@ -1,0 +1,22 @@
+Bridge mqtt:broker:localBroker "Local Mosquitto Broker" [
+    host="mosquitto",
+    port=1883,
+    secure=false,
+    clientID="openhab-pr7"
+] {
+    Thing topic room1 "Room 1 MQTT" {
+        Channels:
+            Type number : temperature "Room 1 Temperature" [ stateTopic="pr7/room1/temperature" ]
+            Type number : humidity "Room 1 Humidity" [ stateTopic="pr7/room1/humidity" ]
+    }
+    Thing topic room2 "Room 2 MQTT" {
+        Channels:
+            Type number : temperature "Room 2 Temperature" [ stateTopic="pr7/room2/temperature" ]
+            Type number : humidity "Room 2 Humidity" [ stateTopic="pr7/room2/humidity" ]
+    }
+    Thing topic room3 "Room 3 MQTT" {
+        Channels:
+            Type number : temperature "Room 3 Temperature" [ stateTopic="pr7/room3/temperature" ]
+            Type number : humidity "Room 3 Humidity" [ stateTopic="pr7/room3/humidity" ]
+    }
+}

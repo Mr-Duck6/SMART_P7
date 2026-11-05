@@ -1,0 +1,34 @@
+sitemap climate label="PR7 - IoT Climate Monitoring" {
+    Frame label="Поточні показники" {
+        Text item=Temp_Room1
+        Text item=Humidity_Room1
+        Text item=Temp_Room2
+        Text item=Humidity_Room2
+        Text item=Temp_Room3
+        Text item=Humidity_Room3
+    }
+    Frame label="Агрегована аналітика" {
+        Text item=AvgTemperature
+        Text item=MinTemperature
+        Text item=MaxTemperature
+        Text item=LastAnalyticsUpdate
+    }
+    Frame label="Середня температура за останню годину" {
+        Text item=HourAvg_Room1
+        Text item=HourAvg_Room2
+        Text item=HourAvg_Room3
+        Text item=HourAvg_All
+    }
+    Frame label="Графіки температури" {
+        Chart item=Temp_Room1 period=h service="rrd4j" legend=true
+        Chart item=Temp_Room2 period=h service="rrd4j" legend=true
+        Chart item=Temp_Room3 period=h service="rrd4j" legend=true
+        Chart item=Temp_Room1 period=D service="rrd4j" legend=true
+        Chart item=Temp_Room2 period=D service="rrd4j" legend=true
+        Chart item=Temp_Room3 period=D service="rrd4j" legend=true
+    }
+    Frame label="Детекція аномалій" {
+        Text item=AnomalyStatus
+        Text item=AnomalyLog
+    }
+}
