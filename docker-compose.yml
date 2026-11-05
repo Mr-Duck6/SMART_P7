@@ -1,0 +1,59 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: pr7-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+      - mosquitto_data:/mosquitto/data
+    networks:
+      - pr7_net
+
+  openhab:
+    image: openhab/openhab:4.3.6
+    container_name: pr7-openhab
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    ports:
+      - "8081:8080"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      USER_ID: "9001"
+      GROUP_ID: "9001"
+      EXTRA_JAVA_OPTS: "-Duser.timezone=Europe/Kyiv"
+      CRYPTO_POLICY: "unlimited"
+    volumes:
+      - ./openhab/conf:/openhab/conf
+      - openhab_userdata:/openhab/userdata
+      - openhab_addons:/openhab/addons
+    networks:
+      - pr7_net
+
+  simulator:
+    build:
+      context: ./simulator
+    container_name: pr7-simulator
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PORT: "1883"
+      PUBLISH_INTERVAL: "5"
+      ANOMALY_EVERY_SECONDS: "180"
+    networks:
+      - pr7_net
+
+volumes:
+  mosquitto_data:
+  openhab_userdata:
+  openhab_addons:
+
+networks:
+  pr7_net:
+    driver: bridge
